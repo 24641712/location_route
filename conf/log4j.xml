@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30"><!-- 每30秒检查一次配置文件，并重新加载 -->
+	<Appenders><!-- 输出源，简单说就是输出到哪里,下面配置了三个输出源 -->
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+		<File name="file" fileName="${log4j:configParentLocation}/log/output.log"><!-- 日志文件存放在 WEB-INF\classes\log\文件夹下面 -->
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</File>
+		<RollingFile name="RollingFile"
+			fileName="${log4j:configParentLocation}/logs/app.log"
+			filePattern="${log4j:configParentLocation}/logs/$${date:MM-dd-yyyy}.%i.log.gz">  <!-- 大于50M时压缩文件日志文件存放在 WEB-INF\classes\logs\文件夹下面 -->
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n" />
+			<SizeBasedTriggeringPolicy size="50MB" />
+		</RollingFile>
+	</Appenders>
+	<Loggers><!-- 配置日志记录器，记录级别等内容 -->
+		<Logger name="xgny.spring.AOP" level="trace" additivity="false">
+			<span class="externalLink"></span>
+			<AppenderRef ref="RollingFile" />
+		</Logger>
+		<Root level="WARN">
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+</Configuration>  

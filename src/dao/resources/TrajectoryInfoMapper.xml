@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   <!--
+       Mybatis批量添加数据到数据库，只编译一次即可实现数据添加，提高效率
+      单条添加数据需单条编译，‘
+      数据库设计时，设置三张表分别为原始轨迹表、轨迹点表、人员表
+      原始轨迹表：id、人员id、数据那条轨迹（一个文件一条轨迹）id
+      轨迹点表： 数据那条轨迹（一个文件一条轨迹）id、轨迹点数据
+      人员表：    人员id
+    -->
+
+<mapper namespace="dao.TrajectoryInfoMapper">
+    <!--
+       useGeneratedKeys:主键设置为自增
+       point_id：主键id
+    -->
+    <insert id="insertTrajectoryInfo" useGeneratedKeys="true" keyColumn="point_id">
+	  insert into trajectory_point (tra_id,point_adress,start_time,end_time,stay_time,local_type,user_id,time_id) VALUES (#{traId},#{adress},#{start_time},#{end_time},#{stay_time},#{local_type},#{userId},#{time_id})
+    </insert>
+    <!-- TrackPoint getTrajectoryInfo(Integer userId);-->
+
+    <!--  <resultMap id="getTrahectoryInfo" type="beans.TrackPoint">
+          <id column="point_id" property="pointId"></id>
+          <result column=""
+      </resultMap>-->
+
+    <select id="getTrajectoryInfo" resultType="beans.TrackPoint">
+      select * from trajectory_point t where t.user_id =#{userId} and t.tra_id = #{traId} ORDER BY t.tra_id
+    </select>
+
+     <!--
+        获取全部属性数据
+      -->
+    <select id="getTrajectoryDataByUserid" resultType="beans.TrackPoint">
+        select * from trajectory_point t where t.user_id =#{userId} ORDER BY t.tra_id
+    </select>
+
+    <!--
+       获取部分属性数据
+     -->
+    <resultMap id="getTime" type="beans.TrackPoint">
+        <id column="time_id" property="timeId"></id>
+        <result column="time_name" property="timeName"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="end_time" property="endTime"></result>
+    </resultMap>
+
+      <!--
+        查询数据
+        -->
+    <select id="getTimeInfo" resultMap="getTime">
+        SELECT t.`time_id`,t.`time_name`,t.`start_time`,t.`end_time` FROM time_interval t
+    </select>
+
+</mapper>
